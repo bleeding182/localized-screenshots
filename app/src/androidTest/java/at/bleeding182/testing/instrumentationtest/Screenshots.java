@@ -113,15 +113,15 @@ public class Screenshots {
         assertEquals("Could not create directory", true, file.getParentFile().mkdirs() || file.getParentFile().exists());
 
 
-        Process process = Runtime.getRuntime().exec("screencap " + "/sdcard/test/" + Locale.getDefault().getLanguage() + "/screenshot.png");
-        try {
-            process.waitFor();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-//        final Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
-//        boolean success = UiDevice.getInstance(instrumentation).takeScreenshot(file);
-//        assertEquals("Saving Screenshot failed", true, success);
+//        Process process = Runtime.getRuntime().exec("screencap " + "/sdcard/test/" + Locale.getDefault().getLanguage() + "/screenshot.png");
+//        try {
+//            process.waitFor();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        final Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+        boolean success = UiDevice.getInstance(instrumentation).takeScreenshot(file);
+        assertEquals("Saving Screenshot failed", true, success);
 
 
 
