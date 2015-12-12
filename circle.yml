@@ -7,8 +7,7 @@ test:
     # wait for it to have booted
     - circle-android wait-for-boot
     # run tests  against the emulator.
-    - ADB_INSTALL_TIMEOUT=10 ./gradlew connectedAndroidTest
-        timeout: 360
+    - ./gradlew connectedAndroidTest
     # copy the build outputs to artifacts
     - mkdir -p app/build/outputs/screenshots
     - adb pull /sdcard/test app/build/outputs/screenshots
