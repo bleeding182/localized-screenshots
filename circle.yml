@@ -6,8 +6,11 @@ test:
         parallel: true
     # wait for it to have booted
     - circle-android wait-for-boot
+    - sleep 60
     # run tests  against the emulator.
-    - ./gradlew connectedAndroidTest
+    - adb shell input keyevent 82:
+        background: true
+    - ADB_INSTALL_TIMEOUT=10 ./gradlew connectedAndroidTest
     # copy the build outputs to artifacts
     - mkdir -p app/build/outputs/screenshots
     - adb pull /sdcard/test app/build/outputs/screenshots

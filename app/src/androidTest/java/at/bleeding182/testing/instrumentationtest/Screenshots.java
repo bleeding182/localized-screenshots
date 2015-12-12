@@ -175,6 +175,13 @@ public class Screenshots {
 
         // Wait for the app to appear
         mDevice.wait(Until.hasObject(By.pkg(BuildConfig.APPLICATION_ID).depth(0)), LAUNCH_TIMEOUT);
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        try {
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
 
