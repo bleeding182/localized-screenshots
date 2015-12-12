@@ -42,6 +42,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.Until;
+import android.view.WindowManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -110,9 +111,20 @@ public class Screenshots {
         // take screenshot
         final File file = new File("/sdcard/test/" + Locale.getDefault().getLanguage() + "/screenshot.png");
         assertEquals("Could not create directory", true, file.getParentFile().mkdirs() || file.getParentFile().exists());
-        final Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
-        boolean success = UiDevice.getInstance(instrumentation).takeScreenshot(file);
-        assertEquals("Saving Screenshot failed", true, success);
+
+
+        Process process = Runtime.getRuntime().exec("screencap " + "/sdcard/test/" + Locale.getDefault().getLanguage() + "/screenshot.png");
+        try {
+            process.waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+//        final Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+//        boolean success = UiDevice.getInstance(instrumentation).takeScreenshot(file);
+//        assertEquals("Saving Screenshot failed", true, success);
+
+
+
 
         FileInputStream inputStream = new FileInputStream(file);
         BitmapFactory.Options opt = new BitmapFactory.Options();
