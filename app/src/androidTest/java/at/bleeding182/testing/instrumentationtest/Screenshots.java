@@ -124,6 +124,14 @@ public class Screenshots {
 
         // add test data
         App app = (App) InstrumentationRegistry.getTargetContext().getApplicationContext();
+
+        try {
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         UserComponent component = DaggerUserComponent.builder().randomModule(new MockModule()).build();
         app.setUserComponent(component);
 
