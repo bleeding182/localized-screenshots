@@ -24,7 +24,9 @@
 
 package at.bleeding182.testing.instrumentationtest;
 
+import android.annotation.TargetApi;
 import android.app.Instrumentation;
+import android.app.UiAutomation;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -38,6 +40,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.UiDevice;
@@ -99,6 +102,7 @@ public class Screenshots {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Test
     public void makeScreenshot() throws IOException {
         // add test data
@@ -113,24 +117,27 @@ public class Screenshots {
         assertEquals("Could not create directory", true, file.getParentFile().mkdirs() || file.getParentFile().exists());
 
 
-        Process process = Runtime.getRuntime().exec("screencap " + "/sdcard/test/" + Locale.getDefault().getLanguage() + "/screenshot_cap.png");
-        try {
-            process.waitFor();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        Process process = Runtime.getRuntime().exec("screencap " + "/sdcard/test/" + Locale.getDefault().getLanguage() + "/screenshot_cap.png");
+//        try {
+//            process.waitFor();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         final Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
-        boolean success = UiDevice.getInstance(instrumentation).takeScreenshot(file);
-        assertEquals("Saving Screenshot failed", true, success);
+//        boolean success = UiDevice.getInstance(instrumentation).takeScreenshot(file);
+//        assertEquals("Saving Screenshot failed", true, success);
 
 
 
 
-        FileInputStream inputStream = new FileInputStream(file);
-        BitmapFactory.Options opt = new BitmapFactory.Options();
-        opt.inMutable = true;
-        Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, opt);
-        inputStream.close();
+//        FileInputStream inputStream = new FileInputStream(file);
+//        BitmapFactory.Options opt = new BitmapFactory.Options();
+//        opt.inMutable = true;
+//        Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, opt);
+
+        Bitmap bitmap = instrumentation.getUiAutomation().takeScreenshot();
+//        bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+//        inputStream.close();
 
         int statusBarColor = bitmap.getPixel(mDevice.getDisplayWidth() - 2, 2);
         int resourceId = app.getResources().getIdentifier("status_bar_height", "dimen", "android");
