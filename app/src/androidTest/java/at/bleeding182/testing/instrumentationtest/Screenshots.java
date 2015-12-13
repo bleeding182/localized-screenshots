@@ -136,7 +136,7 @@ public class Screenshots {
 //        Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, opt);
 
         Bitmap bitmap = instrumentation.getUiAutomation().takeScreenshot();
-//        bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+        bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
 //        inputStream.close();
 
         int statusBarColor = bitmap.getPixel(mDevice.getDisplayWidth() - 2, 2);
