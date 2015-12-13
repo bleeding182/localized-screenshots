@@ -41,11 +41,16 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.os.Environment;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.Until;
+import android.view.View;
 import android.view.WindowManager;
+
+import com.robotium.solo.Condition;
+import com.robotium.solo.Solo;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -65,6 +70,7 @@ import at.bleeding182.testing.instrumentationtest.modules.RandomModule;
 import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author David Medenjak on 12.12.2015.
@@ -75,6 +81,7 @@ public class Screenshots {
     private static final long LAUNCH_TIMEOUT = 5 * 1000;
     private final Locale mLocale;
     private UiDevice mDevice;
+    private Solo mSolo;
 
     @Parameterized.Parameters(name = "Locale: {0}")
     public static Collection<Locale> locales() {
@@ -92,7 +99,9 @@ public class Screenshots {
 
     @Before
     public void setupTest() {
-        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+        mDevice = UiDevice.getInstance(instrumentation);
+        mSolo = new Solo(instrumentation);
     }
 
     public static class MockModule extends RandomModule {
@@ -117,27 +126,15 @@ public class Screenshots {
         assertEquals("Could not create directory", true, file.getParentFile().mkdirs() || file.getParentFile().exists());
 
 
-//        Process process = Runtime.getRuntime().exec("screencap " + "/sdcard/test/" + Locale.getDefault().getLanguage() + "/screenshot_cap.png");
-//        try {
-//            process.waitFor();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-        final Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
-//        boolean success = UiDevice.getInstance(instrumentation).takeScreenshot(file);
-//        assertEquals("Saving Screenshot failed", true, success);
+        takeScreenshot("/sdcard/test/" + Locale.getDefault().getLanguage() + "/screenshot.png");
+
+        FileInputStream inputStream = new FileInputStream(file);
+        BitmapFactory.Options opt = new BitmapFactory.Options();
+        opt.inMutable = true;
+        Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, opt);
 
 
-
-
-//        FileInputStream inputStream = new FileInputStream(file);
-//        BitmapFactory.Options opt = new BitmapFactory.Options();
-//        opt.inMutable = true;
-//        Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, opt);
-
-        Bitmap bitmap = instrumentation.getUiAutomation().takeScreenshot();
-        bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-//        inputStream.close();
+        inputStream.close();
 
         int statusBarColor = bitmap.getPixel(mDevice.getDisplayWidth() - 2, 2);
         int resourceId = app.getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -172,6 +169,26 @@ public class Screenshots {
                 (statusBarHeight - battery.getHeight()) / 2, paint);
 
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(file));
+    }
+
+    public void takeScreenshot(final String filename) {
+        View view = mSolo.getCurrentViews().get(0).getRootView();
+        view.setDrawingCacheEnabled(true);
+        view.buildDrawingCache();
+        Bitmap bitmap = view.getDrawingCache();
+
+        File directory = new File(filename);
+//        directory.mkdirs();
+
+        if (bitmap != null) {
+            try {
+                File outputFile = new File(directory, filename);
+                FileOutputStream ostream = new FileOutputStream(outputFile);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, ostream);
+                ostream.close();
+            } catch (Exception e) {
+            }
+        }
     }
 
     private void launchActivity() {
