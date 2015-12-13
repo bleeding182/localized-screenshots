@@ -115,12 +115,33 @@ public class Screenshots {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Test
     public void makeScreenshot() throws IOException {
+        try {
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         // add test data
         App app = (App) InstrumentationRegistry.getTargetContext().getApplicationContext();
         UserComponent component = DaggerUserComponent.builder().randomModule(new MockModule()).build();
         app.setUserComponent(component);
 
+        try {
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         launchActivity();
+
+        try {
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         // take screenshot
         final File file = new File("/sdcard/test/" + Locale.getDefault().getLanguage() + "/screenshot.png");
@@ -129,47 +150,47 @@ public class Screenshots {
 
         takeScreenshot("/sdcard/test/" + Locale.getDefault().getLanguage() + "/screenshot.png");
 
-        FileInputStream inputStream = new FileInputStream(file);
-        BitmapFactory.Options opt = new BitmapFactory.Options();
-        opt.inMutable = true;
-        Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, opt);
-
-
-        inputStream.close();
-
-        int statusBarColor = bitmap.getPixel(mDevice.getDisplayWidth() - 2, 2);
-        int resourceId = app.getResources().getIdentifier("status_bar_height", "dimen", "android");
-        int statusBarHeight = app.getResources().getDimensionPixelSize(resourceId);
-
-        Paint paint = new Paint();
-        paint.setColor(statusBarColor);
-
-        Canvas canvas = new Canvas(bitmap);
-        canvas.drawRect(0, 0, mDevice.getDisplayWidth(), statusBarHeight, paint);
-
-        paint.setAntiAlias(true);
-        paint.setTypeface(Typeface.create("sans-serif-regular", 0));
-        paint.setTextAlign(Paint.Align.RIGHT);
-
-        paint.setTextSize(14 * app.getResources().getDisplayMetrics().scaledDensity);
-        paint.setColor(Color.argb((int) (255), 255, 255, 255));
-
-        Rect rect = new Rect();
-        paint.getTextBounds("10:00", 0, 5, rect);
-
-        final float dp8 = app.getResources().getDisplayMetrics().density * 8;
-
-        canvas.drawText("10:00",
-                mDevice.getDisplayWidth() - dp8,
-                (statusBarHeight / 2) - rect.exactCenterY(), paint);
-
-        int batteryId = app.getResources().getIdentifier("stat_sys_battery_100", "drawable", "android");
-        Bitmap battery = BitmapFactory.decodeResource(app.getResources(), batteryId);
-        paint.setColorFilter(new PorterDuffColorFilter(Color.argb(255, 255, 255, 255), PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(battery, mDevice.getDisplayWidth() - 2 * dp8 - rect.width() - battery.getWidth(),
-                (statusBarHeight - battery.getHeight()) / 2, paint);
-
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(file));
+//        FileInputStream inputStream = new FileInputStream(file);
+//        BitmapFactory.Options opt = new BitmapFactory.Options();
+//        opt.inMutable = true;
+//        Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, opt);
+//
+//
+//        inputStream.close();
+//
+//        int statusBarColor = bitmap.getPixel(mDevice.getDisplayWidth() - 2, 2);
+//        int resourceId = app.getResources().getIdentifier("status_bar_height", "dimen", "android");
+//        int statusBarHeight = app.getResources().getDimensionPixelSize(resourceId);
+//
+//        Paint paint = new Paint();
+//        paint.setColor(statusBarColor);
+//
+//        Canvas canvas = new Canvas(bitmap);
+//        canvas.drawRect(0, 0, mDevice.getDisplayWidth(), statusBarHeight, paint);
+//
+//        paint.setAntiAlias(true);
+//        paint.setTypeface(Typeface.create("sans-serif-regular", 0));
+//        paint.setTextAlign(Paint.Align.RIGHT);
+//
+//        paint.setTextSize(14 * app.getResources().getDisplayMetrics().scaledDensity);
+//        paint.setColor(Color.argb((int) (255), 255, 255, 255));
+//
+//        Rect rect = new Rect();
+//        paint.getTextBounds("10:00", 0, 5, rect);
+//
+//        final float dp8 = app.getResources().getDisplayMetrics().density * 8;
+//
+//        canvas.drawText("10:00",
+//                mDevice.getDisplayWidth() - dp8,
+//                (statusBarHeight / 2) - rect.exactCenterY(), paint);
+//
+//        int batteryId = app.getResources().getIdentifier("stat_sys_battery_100", "drawable", "android");
+//        Bitmap battery = BitmapFactory.decodeResource(app.getResources(), batteryId);
+//        paint.setColorFilter(new PorterDuffColorFilter(Color.argb(255, 255, 255, 255), PorterDuff.Mode.SRC_IN));
+//        canvas.drawBitmap(battery, mDevice.getDisplayWidth() - 2 * dp8 - rect.width() - battery.getWidth(),
+//                (statusBarHeight - battery.getHeight()) / 2, paint);
+//
+//        bitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(file));
     }
 
     public void takeScreenshot(final String filename) {
