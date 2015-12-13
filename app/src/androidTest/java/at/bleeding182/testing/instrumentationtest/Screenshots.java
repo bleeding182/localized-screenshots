@@ -68,6 +68,7 @@ import java.util.Locale;
 import at.bleeding182.testing.instrumentationtest.modules.RandomModule;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertTrue;
@@ -182,11 +183,12 @@ public class Screenshots {
 
         if (bitmap != null) {
             try {
-                File outputFile = new File(directory, filename);
-                FileOutputStream ostream = new FileOutputStream(outputFile);
+//                File outputFile = new File(directory, filename);
+                FileOutputStream ostream = new FileOutputStream(directory);
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, ostream);
                 ostream.close();
             } catch (Exception e) {
+                fail(e.getMessage());
             }
         }
     }
