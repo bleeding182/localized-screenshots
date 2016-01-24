@@ -113,7 +113,7 @@ public class Localization {
         Assert.assertEquals("App Context wrong locale", mLocale.toString(),
                 InstrumentationRegistry.getTargetContext().getApplicationContext().getResources().getConfiguration().locale.toString());
 
-
+        // Check the toolbar for the right localization, will fail for every run after the first
         Assert.assertTrue(get() + " not found", mDevice.findObject(new UiSelector().text(get())).waitForExists(500));
     }
 
