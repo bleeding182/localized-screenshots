@@ -1,4 +1,7 @@
 <resources>
-    <string name="app_name">InstrumentationTest</string>
-    <string name="hello">Hello!</string>
+    <string name="app_name">English</string>
+    <string name="hello">Hello</string>
+
+    <item name="last_width" type="id"/>
+    <item name="last_height" type="id"/>
 </resources>

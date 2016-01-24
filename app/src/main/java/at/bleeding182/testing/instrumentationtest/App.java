@@ -25,6 +25,7 @@
 package at.bleeding182.testing.instrumentationtest;
 
 import android.app.Application;
+import android.util.Log;
 
 /**
  * @author David Medenjak on 12.12.2015.
@@ -35,6 +36,7 @@ public class App extends Application {
 
     @Override
     public void onCreate() {
+        Log.d("LocalizationTest", "onCreate");
         super.onCreate();
 
         mUserComponent = DaggerUserComponent.create();

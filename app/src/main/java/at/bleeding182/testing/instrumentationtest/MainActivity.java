@@ -24,8 +24,8 @@
 
 package at.bleeding182.testing.instrumentationtest;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import javax.inject.Inject;
@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
 
         ((App) getApplicationContext()).getUserComponent().inject(this);
 
-        ((TextView) findViewById(android.R.id.text1)).setText(String.format("%d", number));
         ((TextView) findViewById(android.R.id.text2)).setText(R.string.hello);
     }
 }

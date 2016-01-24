@@ -1,3 +1,4 @@
 <resources>
+    <string name="app_name">French</string>
     <string name="hello">Bonjour</string>
 </resources>
