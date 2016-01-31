@@ -48,6 +48,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
@@ -80,19 +82,24 @@ public class Localization {
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    public Localization(Locale locale) {
-        log(InstrumentationRegistry.getTargetContext().toString());
-        log(InstrumentationRegistry.getTargetContext().getApplicationContext().toString());
+    public Localization(Locale locale) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
+        Context context = InstrumentationRegistry.getTargetContext();
+        log(context.toString());
+        log(context.getApplicationContext().toString());
 
         mLocale = locale;
         Configuration config = new Configuration();
         Locale.setDefault(mLocale);
         config.setLocale(mLocale);
 
-        Resources resources = InstrumentationRegistry.getTargetContext().getResources();
+        Resources resources = context.getResources();
         resources.updateConfiguration(config, resources.getDisplayMetrics());
 
-        resources.flushLayoutCache();
+        Method method = getClass().getClassLoader()
+                .loadClass("android.app.ApplicationPackageManager")
+                .getDeclaredMethod("configurationChanged");
+        method.setAccessible(true);
+        method.invoke(null);
     }
 
     @Before
@@ -105,13 +112,17 @@ public class Localization {
     @Test
     public void makeScreenshot() throws IOException {
         launchActivity();
+        Context context = InstrumentationRegistry.getTargetContext();
+        PackageManager pm = context.getPackageManager();
+        CharSequence text = pm.getText(context.getPackageName(), R.string.app_name, context.getApplicationInfo());
 
+        Assert.assertEquals(get(), text.toString());
 
         Assert.assertEquals("Target Context wrong locale", mLocale.toString(),
-                InstrumentationRegistry.getTargetContext().getResources().getConfiguration().locale.toString());
+                context.getResources().getConfiguration().locale.toString());
 
         Assert.assertEquals("App Context wrong locale", mLocale.toString(),
-                InstrumentationRegistry.getTargetContext().getApplicationContext().getResources().getConfiguration().locale.toString());
+                context.getApplicationContext().getResources().getConfiguration().locale.toString());
 
         // Check the toolbar for the right localization, will fail for every run after the first
         Assert.assertTrue(get() + " not found", mDevice.findObject(new UiSelector().text(get())).waitForExists(500));
