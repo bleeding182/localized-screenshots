@@ -31,7 +31,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Build;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.uiautomator.By;
@@ -48,6 +47,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
@@ -80,19 +81,22 @@ public class Localization {
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    public Localization(Locale locale) {
+    public Localization(Locale locale) throws ClassNotFoundException, NoSuchMethodException,
+            InvocationTargetException, IllegalAccessException {
         log(InstrumentationRegistry.getTargetContext().toString());
         log(InstrumentationRegistry.getTargetContext().getApplicationContext().toString());
 
         mLocale = locale;
-        Configuration config = new Configuration();
-        Locale.setDefault(mLocale);
-        config.setLocale(mLocale);
 
-        Resources resources = InstrumentationRegistry.getTargetContext().getResources();
-        resources.updateConfiguration(config, resources.getDisplayMetrics());
-
-        resources.flushLayoutCache();
+        Class<?> amClass = Class.forName("android.app.ActivityManagerNative");
+        Method getDefaultMethod = amClass.getDeclaredMethod("getDefault");
+        Object iActivityManager = getDefaultMethod.invoke(null /* static method */);
+        Method updateConfigurationMethod =
+                amClass.getMethod("updateConfiguration", Configuration.class);
+        Configuration configuration = new Configuration(InstrumentationRegistry.getTargetContext()
+                .getResources().getConfiguration());
+        configuration.locale = locale;
+        updateConfigurationMethod.invoke(iActivityManager, configuration);
     }
 
     @Before
@@ -118,7 +122,7 @@ public class Localization {
     }
 
     public String get() {
-        switch (mLocale.toString()) {
+        switch (mLocale.getLanguage()) {
             case "en":
                 return "English";
             case "de":
