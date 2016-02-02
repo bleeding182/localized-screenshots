@@ -61,6 +61,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
@@ -89,13 +91,21 @@ public class Screenshots {
         return Arrays.asList(new Locale("en"), new Locale("de"), new Locale("fr"));
     }
 
-    public Screenshots(Locale locale) {
+    public Screenshots(Locale locale) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         mLocale = locale;
         Configuration config = new Configuration();
         Locale.setDefault(mLocale);
         config.locale = mLocale;
         Resources resources = InstrumentationRegistry.getTargetContext().getApplicationContext().getResources();
         resources.updateConfiguration(config, resources.getDisplayMetrics());
+
+        Method method = getClass().getClassLoader()
+                .loadClass("android.app.ApplicationPackageManager")
+                .getDeclaredMethod("configurationChanged");
+        method.setAccessible(true);
+        method.invoke(null);
+
+
     }
 
     @Before

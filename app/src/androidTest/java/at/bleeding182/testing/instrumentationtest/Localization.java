@@ -92,14 +92,14 @@ public class Localization {
         Locale.setDefault(mLocale);
         config.setLocale(mLocale);
 
-        Resources resources = context.getResources();
-        resources.updateConfiguration(config, resources.getDisplayMetrics());
-
+        Object thread = getClass().getClassLoader()
+                .loadClass("android.app.ActivityThread")
+                .getMethod("currentActivityThread")
+                .invoke(null);
         Method method = getClass().getClassLoader()
-                .loadClass("android.app.ApplicationPackageManager")
-                .getDeclaredMethod("configurationChanged");
-        method.setAccessible(true);
-        method.invoke(null);
+                .loadClass("android.app.ActivityThread")
+                .getMethod("applyConfigurationToResources", Configuration.class);
+        method.invoke(thread, config);
     }
 
     @Before
