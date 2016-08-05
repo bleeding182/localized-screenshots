@@ -67,8 +67,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
 
     // dagger 2
-    apt 'com.google.dagger:dagger-compiler:2.1-SNAPSHOT'
-    compile 'com.google.dagger:dagger:2.1-SNAPSHOT'
+    apt 'com.google.dagger:dagger-compiler:2.1'
+    compile 'com.google.dagger:dagger:2.1'
     provided 'javax.annotation:jsr250-api:1.0'
 
 
